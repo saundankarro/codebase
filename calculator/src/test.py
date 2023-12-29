@@ -1,4 +1,4 @@
-from calculator import addn, subt, mult, dvd, exp, root
+from calculator import addn, subt, mult, dvd, exp, root, temp
 
 x = addn(1,1)
 print(f"1 + 1 = {x}")
@@ -25,3 +25,12 @@ print(f"The fourth root of 16 = {r}")
 
 s=root(64,6,5)
 print(f"64 ^ (5/6) = {s}")
+
+t = temp(32,'f','c')
+print(f"32F in Celsius is {t}")
+
+t = temp(0, 'Celsius', 'Fahrenheit')
+print(f"0C in Farhenheit is {t}")
+
+t = temp(212, 'F', 'kelvin')
+print(f"212 Fahrenheit in Kelvin is {t}")
