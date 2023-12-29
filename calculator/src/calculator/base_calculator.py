@@ -1,19 +1,19 @@
 from .calc_exceptions import InvalidCalculation
 
 def addn(*num):
-    sum = 0
+    res = 0
     for n in num:
-        sum = sum + n
-    return sum
+        res = res + n
+    return res
 
 def subt(*num):
     if len(num) > 1:
-        diff = num[0]
+        res = num[0]
         for n in num[1:]:
-            diff = diff - n
+            res = res - n
     else:
         return num
-    return diff
+    return res
 
 def mult(*num):
     res = 1
