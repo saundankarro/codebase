@@ -1,32 +1,25 @@
-from .metric_converstion import Metric as M
+from .metric import Metric as M
+from .imperial import Imperial as I
+from .metric_conversions import metric_conversions as met
+from .imperial_conversions import imperial_conversions as imp
 
 def temp(degree: int, scale: str,cvrt: str) -> int:
     
-    if len(scale) > 1:
-        scale = scale[0].upper()
-    elif len(scale) < 0:
-        raise ValueError("scale needs a value to convert the temperature")
-    else:
-        scale = scale.upper()
-        
-    if len(cvrt) > 1:
-        cvrt = cvrt[0].upper()
-    elif len(cvrt) < 0:
-        raise ValueError("cvrt needs a value to convert the temperature")
-    else:
-        cvrt = cvrt.upper()
+    o = scale.lower()
+    f = cvrt.lower()
     
-    if scale == 'F' and cvrt == 'C':
-        res = (degree - 32)*5/9
-    if scale == 'C' and cvrt == 'F':
-        res = (degree*9/5) + 32
-    if scale == 'C' and cvrt == 'K':
-        res = degree + 273.15
-    if scale == 'F' and cvrt == 'K':
-        res = (degree - 32)*5/9 + 273.15
+    if f[0] == 'f':
+        res = imp.conv_to_f(degree, o)
+    elif f[0] == 'c':
+        res = met.conv_to_c(degree, o)
+    elif f[0] == 'k':
+        res = met.conv_to_k(degree, o)
+    else:
+        raise ValueError('Cannot convert to final scale. Please use proper temperature scales')
+        
     
     return res
 
 def conv_len(l:int, s:str, c:str):
     
-    
+    return print(f"L: {l}\nS:{s}\nC:{c}")

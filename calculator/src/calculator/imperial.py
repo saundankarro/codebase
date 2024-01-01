@@ -4,25 +4,32 @@ class Imperial:
         ### Determines unit of length used
         if len(u) == 2:
             if u[0] =='m':
-                u = 'miles'
+                return 'miles'
             elif u[0] == 'i':
-                u = 'inches'
+                return 'inches'
             elif u[0] == 'f':
-                u = 'feet'
+                return 'feet'
             elif u[0] == 'y':
-                u = 'yard'
+                return 'yards'
         else:
             raise ValueError('Not an Imperial Value')
         
         if len(u) > 2:
             if u == 'inch':
-                u = 'inches'
+                return 'inches'
             elif u == 'mile':
-                u = 'miles'
+                return 'miles'
             elif u == 'foot':
-                u = 'feet'
+                return 'feet'
             elif u == 'yard':
-                u = 'yards'
+                return 'yards'
             else:
                 raise ValueError('Incorrect Values Entered. Please pass valid arguments.')
             
+    def temp_units(u):
+        if len(u) == 1 and u.lower() == 'f':
+            return u
+        elif len(u) > 1 and u.lower() == 'fahrenheit':
+            return 'f'
+        else:
+            return ValueError('Not an Imperial temperature')

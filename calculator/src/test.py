@@ -34,3 +34,14 @@ print(f"0C in Farhenheit is {t}")
 
 t = temp(212, 'F', 'kelvin')
 print(f"212 Fahrenheit in Kelvin is {t}")
+
+t = temp(373.15, 'K', 'F')
+print(f"373.15 Kelvin in Fahrenheit is {t}")
+
+t = temp(100, "Centigrade", "F")
+print(f"100 Centigrade in Fahrenheit is {t}")
+
+try:
+    g = temp(0, 'Celsius', 'Gradient')
+except Exception as e:
+    print(e)
