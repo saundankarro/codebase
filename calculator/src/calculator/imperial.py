@@ -1,35 +1,53 @@
 class Imperial:
     
-    def length_unit(u):
-        ### Determines unit of length used
-        if len(u) == 2:
-            if u[0] =='m':
-                return 'miles'
-            elif u[0] == 'i':
-                return 'inches'
-            elif u[0] == 'f':
-                return 'feet'
-            elif u[0] == 'y':
-                return 'yards'
-        else:
-            raise ValueError('Not an Imperial Value')
-        
-        if len(u) > 2:
-            if u == 'inch':
-                return 'inches'
-            elif u == 'mile':
-                return 'miles'
-            elif u == 'foot':
-                return 'feet'
-            elif u == 'yard':
-                return 'yards'
+    imp_len = ('mile', 'miles', 'inch', 'inches', 'feet', 'foot', 'yard', 'yards')
+    imp_abb_len = ('mi', 'in', 'ft', 'yd')
+    imp_temp = ('fahrenheit')
+    imp_abb_temp = ('f')
+    
+    @staticmethod
+    def imp_abb_len_unit(v):
+        u = v.lower()
+        if u in Imperial.imp_len:
+            if 'mile' in u:
+                return 'mi'
+            elif 'inch' in u:
+                return 'in'
+            elif 'foot' in u or 'feet' in u:
+                return 'ft'
+            elif 'yard' in u:
+                return 'yd'
             else:
-                raise ValueError('Incorrect Values Entered. Please pass valid arguments.')
+                return ValueError('Units provided are not Imperial units. Please use correct units.')
+        elif u in Imperial.abb_len_units:
+            return u.strip()
+    
+    @staticmethod
+    def check_if_len_abb(u: str):
+        ### Check if abbreviated units are correct abbreviations of Imperial units
+        
+        if len(u) == 2 and u in Imperial.imp_abb_len:
             
-    def temp_units(u):
-        if len(u) == 1 and u.lower() == 'f':
             return u
-        elif len(u) > 1 and u.lower() == 'fahrenheit':
+        else:
+            return ValueError('Units provided are not Imperial units. Please use correct units.')
+    
+    @staticmethod
+    def abb_len_units(u):
+        ### Abbreviates units if not already abbreviated
+        if len(u) > 2 and u.strip().lower() in Imperial.imp_len:
+            u = Imperial.imp_abb_len_unit(u)
+            return Imperial.check_if_len_abb(u)
+        elif len(u) == 2:
+            return Imperial.check_if_len_abb(u)
+        else:
+            raise ValueError('Incorrect Values Entered. Please pass valid arguments.')
+    
+    @staticmethod
+    def abb_temp_unit(u):
+        if len(u) == 1 and u.strip().lower() in Imperial.imp_abb_temp_units:
+            return u.lower()
+        elif len(u) > 1 and u.strip().lower() in Imperial.imp_temp_units:
             return 'f'
         else:
             return ValueError('Not an Imperial temperature')
