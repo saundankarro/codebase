@@ -3,6 +3,8 @@ from .imperial import Imperial as I
 
 class metric_conversions:
     
+    len_units = ('mm', 'cm', 'm', 'km')
+    
     @staticmethod
     def conv_to_c(v: int, o: str):
         
@@ -33,24 +35,33 @@ class metric_conversions:
             return ValueError('Cannot convert from given scale. Please use proper temperature scales.')
     
     @staticmethod
-    def conv_btwn_m_km(l:int, s:str, c:str):
-        orig = M.abb_len_unit(s)
-        fin = M.abb_len_unit(c)
-        
-        if orig == 'm' and fin == 'km':
-            return l/1000
-        elif orig == 'km' and fin == 'm':
+    def div_by_thous(l:int):
+        return l/1000
+    
+    @staticmethod 
+    def mult_by_thous(l:int):
             return l*1000
+    
+    @staticmethod
+    def mult_by_hund(l:int):
+        return l*100
+    
+    @staticmethod
+    def div_by_hund(l:int):
+        return l/100
     
     @staticmethod
     def len_conv(v: int,o: str,c: str):
         ### Takes v value in o original unit and converts it to v value in c converted units
         
         orig = o.strip().lower()
-        fin = o.strip().lower()
+        fin = c.strip().lower()
         
-        if orig == 'mm' and fin == 'm':
-            return metric_conversions.conv_btwn_m_km(v,orig, fin)
-        elif (orig == 'm' and fin =='km') or (orig == 'km' and fin == 'm'):
-            return metric_conversions.conv_btwn_m_km(v,orig, fin)
-        return res
+        if (orig == 'mm' and fin == 'm') or (orig == 'm' and fin == 'km'):
+            return metric_conversions.div_by_thous(v,orig, fin)
+        elif (orig == 'm' and fin =='km') or (orig == 'm' and fin == 'mm'):
+            return metric_conversions.mult_by_thous(v,orig, fin)
+        elif orig == 'cm' and fin == 'm':
+            return metric_conversions.div_by_hund(v)
+        elif orig == 'm' and fin == 'cm':
+            return metric_conversions.mult_by_hund(v)

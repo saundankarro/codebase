@@ -56,13 +56,76 @@ def conv_btwn_in_cm(l:int, s:str, c:str):
     elif orig == 'cm' and fin == 'in':
         return l/2.54
 
+@staticmethod
+def check_imp_unit(u):
+    if u in I.imp_abb_len or u in I.imp_len:
+        return True
+    else:
+        return False
+
+@staticmethod
+def check_met_unit(u):
+    if u in M.met_abb_len_units or u in M.met_len_units:
+        return True
+    else:
+        return False
+
+@staticmethod
+def check_unit_system(s: str, c: str):
+    sic = check_imp_unit(s)
+    cic = check_imp_unit(c)
+    smc = check_met_unit(s)
+    cmc = check_met_unit(c)
+    
+    print(f"Unit {s} check for Imperial system:- {sic}")
+    print(f"Unit {s} check for Metric system:- {smc}")
+    print(f"Unit {c} check for Imperial system:- {cic}")
+    print(f"Unit {c} check for Metric system:- {cmc}")
+    
+    if check_imp_unit(s) == check_imp_unit(c):
+        return 'ii'
+    elif check_met_unit(s) == check_met_unit(c):
+        return 'mm'
+    elif check_imp_unit(s) == True and check_met_unit(c) == True:
+        return 'im'
+    elif check_met_unit(s) == True and check_imp_unit(c) == False:
+        return 'mi'
+    else:
+        raise ValueError("One or more of the units provided are not from the Metric system or the Imperial system.")
+
+@staticmethod
+def det_met_or_imp(s):
+    if check_imp_unit(s) == True:
+        return I.abb_len_units(s)
+    elif check_met_unit(s) == True:
+        return M.abb_met_len_unit(s)
+    else:
+        raise ValueError("Incorrect units provided. Please use units from the Metric system or the Imperial system.")
+
 def conv_len(l:int, s:str, c:str):
     
-    if I.abb_len_units(s) in imp.len_units and I.abb_len_units(c) in imp.len_units:
+    print(f"conv l:= {l}")
+    print(f"conv s:- {s}")
+    print(f"conv c:- {c}")
+    
+    u1 = det_met_or_imp(s)
+    u2 = det_met_or_imp(c)
+    
+    len_sys_check = check_unit_system(u1,u2)
+    
+    if len_sys_check == 'ii':
         return imp.len_conv(l, s, c)
-    elif M.met_abb_len_unit(s) in met.len_units and I.abb_len_units(c) in imp.len_units:
+    elif len_sys_check == 'mm':
+        return met.len_conv(l,s,c)
+    elif len_sys_check == 'mi':
         l_cm = met.len_conv(l, s, 'cm')
         l_in = conv_btwn_in_cm(l_cm, 'cm', 'in')
         res = imp.len_conv(l_in, 'in', c)
+    elif len_sys_check == 'im':
+        l_cm = imp.len_conv(l, s, 'in')
+        l_in = conv_btwn_in_cm(l_cm, 'in', 'cm')
+        res = met.len_conv(l_in, 'cm', c)
+    else:
+        raise ValueError('Incorrect units provided. Please provide correct values to convert')
    
     return res

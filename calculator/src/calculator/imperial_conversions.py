@@ -100,7 +100,7 @@ class imperial_conversions:
         if orig not in imperial_conversions.len_units and fin not in imperial_conversions.len_units:
             raise ValueError('Incorrect units provided. Please use correct units')
         elif orig == fin:
-            res = v
+            return v
         else:
             if fin == 'in':
                 return imperial_conversions.conv_imp_to_in(v, orig)
@@ -110,5 +110,3 @@ class imperial_conversions:
                 return imperial_conversions.conv_imp_to_yd(v, orig)
             elif fin == 'mi':
                 return imperial_conversions.conv_imp_to_mi(v, orig) 
-            
-        return res
