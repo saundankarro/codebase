@@ -58,5 +58,5 @@ print(f"There are {il} cm in 1 inches")
 # except Exception as e:
 #     print(e)
     
-# il = conv_len(12, 'in', 'ft')
-# print(f"There are 12 inches in {il} ft")
+il = conv_len(12, 'in', 'ft')
+print(f"There are 12 inches in {il} ft")
