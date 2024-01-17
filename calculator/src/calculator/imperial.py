@@ -45,9 +45,10 @@ class Imperial:
     
     @staticmethod
     def abb_temp_unit(u):
-        if len(u) == 1 and u.strip().lower() in Imperial.imp_abb_temp_units:
+
+        if len(u) == 1 and u.strip().lower() in Imperial.imp_abb_temp:
             return u.lower()
-        elif len(u) > 1 and u.strip().lower() in Imperial.imp_temp_units:
+        elif len(u) > 1 and u.strip().lower() in Imperial.imp_temp:
             return 'f'
         else:
             return ValueError('Not an Imperial temperature')

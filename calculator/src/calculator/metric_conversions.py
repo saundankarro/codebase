@@ -8,11 +8,10 @@ class metric_conversions:
     @staticmethod
     def conv_to_c(v: int, o: str):
         
-        print(f"conv_to_c o - {o}")
-        if Metric.met_abb_temp_unit(o) in Metric.met_abb_temp_units:
-            orig = Metric.met_abb_temp_unit(o)
-        elif Imperial.imp_abb_temp_unit(o) == 'f':
-            orig = Imperial.imp_abb_temp_unit(o)
+        if M.abb_met_temp_unit(o) in M.met_abb_temp_units:
+            orig = M.abb_met_temp_unit(o)
+        elif I.abb_temp_unit(o) == 'f':
+            orig = I.abb_temp_unit(o)
         
         orig = orig.lower()
         

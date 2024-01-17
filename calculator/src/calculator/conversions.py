@@ -6,10 +6,17 @@ from .imperial_conversions import imperial_conversions as imp
 
 @staticmethod
 def abb_tmp_unit(o: str):
-    
+
     if o in I.imp_abb_temp or o in I.imp_temp:
-        return I.abb_temp_unit(o)
+        temp_bool = 'I'
     elif o in M.met_abb_temp_units or o in M.met_temp_units:
+        temp_bool = 'M'
+    else:
+        raise ValueError("Unit provided is not recognized. Please use proper temperature scales.")
+
+    if temp_bool == 'I':
+        return I.abb_temp_unit(o)
+    elif temp_bool == 'M':
         return M.abb_met_temp_unit(o)
 
 @staticmethod
@@ -19,13 +26,13 @@ def abb_len_unit(o: str):
     elif o in M.met_abb_len_units or o in M.met_len_units:
         return M.abb_met_len_unit(o)
 
+@staticmethod
 def temp(degree: int, scale: str, cvrt: str) -> int:
     
-    o = abb_tmp_unit(scale)
+    o = abb_tmp_unit(scale.strip().lower())
     
-    f = abb_tmp_unit(cvrt)
+    f = abb_tmp_unit(cvrt.strip().lower())
     
-   
     if f in I.imp_abb_temp:
         res = imp.conv_to_f(degree, o)
     elif f in M.met_abb_temp_units:

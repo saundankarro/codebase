@@ -46,12 +46,13 @@ class Metric:
     
     @staticmethod
     def abb_met_temp_unit(u):
+
         if len(u) == 1 and u.lower() in Metric.met_abb_temp_units:
             return u.lower()
         elif len(u) > 1 and u.lower() in Metric.met_temp_units:
-            if u[0].lower == 'c':
+            if u[0].lower() == 'c':
                 return 'c'
-            elif u[0] == 'k':
+            elif u[0].lower() == 'k':
                 return 'k'
         else:
             return ValueError('Not an Metric temperature')

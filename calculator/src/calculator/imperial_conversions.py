@@ -9,9 +9,9 @@ class imperial_conversions:
     @staticmethod
     def conv_to_f(v: int, o: str):
         
-        o = M.met_abb_temp_unit(o)
-        print(o)
-        orig = o.lower()
+        ori = M.abb_met_temp_unit(o)
+
+        orig = ori.lower()
         
         if orig == 'c':
             return (v*9/5)+32
