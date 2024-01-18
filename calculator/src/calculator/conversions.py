@@ -58,34 +58,51 @@ def conv_btwn_in_cm(l:int, s:str, c:str):
         return l/2.54
 
 @staticmethod
-def check_imp_unit(u):
-    if u in I.imp_abb_len or u in I.imp_len:
+def det_measurement_lists(m,s):
+
+    if s == 'imperial':
+        if m == 'length':
+            list_1 = I.imp_abb_len
+            list_2 = I.imp_len
+        elif m == 'temp':
+            list_1 = I.imp_abb_temp
+            list_2 = I.imp_temp
+    elif s == 'metric':
+        if m == 'length':
+            list_1 = M.met_abb_len_units
+            list_2 = M.met_len_units
+
+    return list_1, list_2
+@staticmethod
+def check_imp_unit(u, m):
+
+    l1, l2 = det_measurement_lists(m, 'imperial')
+
+    if u in l1 or u in l2:
         return True
     else:
         return False
 
 @staticmethod
-def check_met_unit(u):
-    if u in M.met_abb_len_units or u in M.met_len_units:
+def check_met_unit(u,m):
+    
+    l1, l2 = det_measurement_lists(m, 'metric')
+
+    if u in l1 or u in l2:
         return True
     else:
         return False
 
 @staticmethod
-def check_unit_system(a: str, b: str):
-    s = a.strip()
-    c = b.strip()
-
-    sic = check_imp_unit(s)
-    cic = check_imp_unit(c)
-    smc = check_met_unit(s)
-    cmc = check_met_unit(c)
+def check_unit_system(a: str, b: str, m:str):
+    start = a.strip()
+    final = b.strip()
+    measurement = m.strip()
     
-    
-    imp_bool_1 = check_imp_unit(s)
-    imp_bool_2 = check_imp_unit(c)
-    met_bool_1 = check_met_unit(s)
-    met_bool_2 = check_met_unit(c)
+    imp_bool_1 = check_imp_unit(start, measurement)
+    imp_bool_2 = check_imp_unit(final, measurement)
+    met_bool_1 = check_met_unit(start, measurement)
+    met_bool_2 = check_met_unit(final, measurement)
 
     
     if imp_bool_1 == True and met_bool_2 == True:
@@ -101,8 +118,8 @@ def check_unit_system(a: str, b: str):
 
 @staticmethod
 def det_met_or_imp(s):
-    i = check_imp_unit(s)
-    m = check_met_unit(s)
+    i = check_imp_unit(s, 'length')
+    m = check_met_unit(s, 'length')
 
     if i == True:
         return I.abb_len_units(s)
@@ -117,7 +134,7 @@ def conv_len(l:int, s:str, c:str):
     u1 = det_met_or_imp(s)
     u2 = det_met_or_imp(c)
     
-    len_sys_check = check_unit_system(u1,u2)
+    len_sys_check = check_unit_system(u1,u2, 'length')
     
     if len_sys_check == 'ii':
         return imp.len_conv(l, u1, u2)
@@ -135,3 +152,7 @@ def conv_len(l:int, s:str, c:str):
         raise ValueError('Incorrect units provided. Please provide correct values to convert')
    
     return res
+
+@staticmethod
+def conv_vol(l:int, s:str, c:str):
+    pass
