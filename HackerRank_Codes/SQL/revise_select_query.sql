@@ -1,0 +1,9 @@
+-- Revise SQL Query 1
+SELECT * FROM CITY 
+WHERE POPULATION > 100000
+    AND CountryCode = 'USA';
+
+-- Revise SQL Query 2
+SELECT NAME FROM CITY 
+WHERE POPULATION > 120000
+    AND CountryCode = 'USA';
