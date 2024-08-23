@@ -144,3 +144,74 @@ df = pd.DataFrame({
 print(df[['Name','City']])
 
 print(df.iloc[4])
+
+"""
+Practice Task 5
+
+Perform the following operations and output the result to the console
+
+Entries where Salary is > 64000
+Entries where Salary is 65000 or 70000
+
+"""
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve'],
+    'Age': [25, 30, 35, 28, 32],
+    'City': ['New York', 'San Francisco', 'Los Angeles', 'Chicago', 'Boston'],
+    'Salary': [50000, 70000, 65000, 60000, 75000]
+})
+
+big_slry = df[df['Salary']>60000]
+print(big_slry)
+
+spcfc_slry = df[df['Salary'].isin([65000,70000])]
+print(spcfc_slry)
+
+"""
+Practice Task 6
+
+Output the following to the console
+
+DataFrame corresponding to the 3rd and 4th column and the 3rd, 4th and 5th row using iloc
+DataFrame corresponding to the 'Name', 'Age' and 'Salary' columns for 'Charlie' and 'David'
+
+"""
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve'],
+    'Age': [25, 30, 35, 28, 32],
+    'City': ['New York', 'San Francisco', 'Los Angeles', 'Chicago', 'Boston'],
+    'Salary': [50000, 70000, 65000, 60000, 75000]
+})
+
+print(df.iloc[2:,2:])
+
+print(df.loc[[2,3],['Name','Age','Salary']])
+
+"""
+Practice Task 7
+
+Perform the following operations and output the updated DataFrame after each operation
+
+Add a 'Family_name' column with the values ['Marks', 'Higgins', None, 'Stark', 'Evans']
+Reset everyone's salary to 0
+Finally, delete the 'City' column from the dataset
+
+"""
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve'],
+    'Age': [25, 30, 35, 28, 32],
+    'City': ['New York', 'San Francisco', 'Los Angeles', 'Chicago', 'Boston'],
+    'Salary': [50000, 70000, 65000, 60000, 75000]
+})
+
+df['Family_name'] = ['Marks', 'Higgins', None, 'Stark', 'Evans']
+
+print(df)
+
+df['Salary'] *= 0
+
+print(df)
+
+del df['City']
+
+print(df)
