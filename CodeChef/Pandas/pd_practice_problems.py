@@ -85,3 +85,47 @@ Problem 4
 Create a new column 'Performance' with values 'Excellent' for total score > 270, 'Good' for total score > 240, and 'Average' for the rest.
 Use boolean indexing to display all information about students who performed 'Excellent' in Math (score > 90).
 '''
+
+data = {
+    'Student ID': range(1, 11),
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack'],
+    'Age': [18, 19, 18, 20, 19, 18, 20, 19, 18, 20],
+    'Math Score': [85, 76, 90, 88, 92, 78, 95, 82, 89, 91],
+    'Total Score': [265, 236, 263, 263, 268, 254, 281, 240, 274, 267]
+}
+
+df = pd.DataFrame(data)
+
+df['Performance'] = 'Average'
+
+df.loc[df['Total Score'] >240, 'Performance'] = 'Good'
+
+df.loc[df['Total Score']>270,'Performance'] = 'Excellent'
+
+print(df[df['Math Score']>90])
+
+
+'''
+Problem 5
+
+Calculate and display the average score for each subject.
+Remove the 'Age' column and display the first 5 rows of the resulting DataFrame.
+'''
+
+data = {
+    'Student ID': range(1, 11),
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry', 'Ivy', 'Jack'],
+    'Age': [18, 19, 18, 20, 19, 18, 20, 19, 18, 20],
+    'Math Score': [85, 76, 90, 88, 92, 78, 95, 82, 89, 91],
+    'Science Score': [88, 82, 85, 90, 86, 80, 92, 78, 94, 89],
+    'English Score': [92, 78, 88, 85, 90, 86, 94, 80, 91, 87]
+}
+
+df = pd.DataFrame(data)
+
+avg = df[['Math Score', 'Science Score', 'English Score']].mean()
+print(avg)
+
+del df['Age']
+
+print(df.head(5))

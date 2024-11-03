@@ -70,8 +70,6 @@ Example of Dataframes created from list of dictionaries
 
 """
 
-import pandas as pd
-
 # Case 1: All keys are common
 data = [
     {'name': 'Alice', 'age': 25, 'city': 'New York'},
