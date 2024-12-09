@@ -99,7 +99,7 @@ def consolidate_data(stock):
     
     writer = pd.ExcelWriter("price_data.xlsx")
 
-    file_path = dest + '/' + stock
+    file_path = f"{dest}/{stock}"
 
     print(f"Reading files inside {file_path} for consolidation")
 
@@ -107,7 +107,7 @@ def consolidate_data(stock):
         print(f"Found file - {file}")
         if file.split('_')[0] == "HistoricalData":
             print(f"Reading file {file}")
-            df = pd.read_csv(file_path, index_col = 'Date')
+            df = pd.read_csv(f"{file_path}/{file}", index_col = 'Date')
             print(f"Saving file information to excel")
             df.to_excel(writer, sheet_name=stock)
         else:
