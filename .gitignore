@@ -2,5 +2,6 @@ CodeChef/Pandas/pandas_env/
 MLAI/.venv
 MLAI/mlai_env
 MLAI/nasdaq/data/*
-MLAI/*.xlsx
+MLAI/price_data.xlsx
 MLAI/desktop.ini
+MLAI/price_data.xlsx
