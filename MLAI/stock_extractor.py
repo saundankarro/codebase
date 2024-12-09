@@ -11,19 +11,16 @@ import time
 l= list()
 obj={}
 
-def expand_shadow_element(element):
+def expand_shadow_element(driver, element):
     return driver.execute_script('return arguments[0].shadowRoot', element)
 
-# List of stocks to scrape from NASDAQ
-ticker_list = ['MSFT','RKT']
+download_path = "C:/Users/saund/Downloads"
+dest = "C:/Users/saund/Rohit/Code/codebase/MLAI/nasdaq/data"
 
-nasdaq_url = 'https://www.nasdaq.com/market-activity/stocks/'
+def get_stock_data(stock):
 
-download_path = "C:\\Users\\saund\\Downloads\\"
-dest = f'C:\\Users\\saund\\Rohit\\Code\\codebase\\MLAI\\nasdaq\\data\\'
-
-for ticker in ticker_list:
-    target_url = nasdaq_url + ticker + '/historical'
+    nasdaq_url = 'https://www.nasdaq.com/market-activity/stocks/'
+    target_url = nasdaq_url + stock + '/historical'
 
     wb_final = pd.ExcelWriter("price_data.xlsx",engine='xlsxwriter')
 
@@ -40,20 +37,19 @@ for ticker in ticker_list:
     resp = driver.page_source.encode('utf-8').strip()
     soup = bs(resp,'html5lib')
 
-    if ticker_list.index(ticker) == 0: # only need to click the "Accept all cookies" once when the browser is newly opened
-        wait = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//div[@id='onetrust-button-group']//button[@id='onetrust-accept-btn-handler']")))   
-        cookies_button = driver.find_element(By.XPATH, "//div[@id='onetrust-button-group']//button[@id='onetrust-accept-btn-handler']")
-        cookies_button.click()
+    wait = WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//div[@id='onetrust-button-group']//button[@id='onetrust-accept-btn-handler']")))   
+    cookies_button = driver.find_element(By.XPATH, "//div[@id='onetrust-button-group']//button[@id='onetrust-accept-btn-handler']")
+    cookies_button.click()
 
     head_host = driver.find_element(By.TAG_NAME,"nsdq-quote-header")
-    head_root = expand_shadow_element(head_host)
+    head_root = expand_shadow_element(driver, head_host)
     print(f"Shadow Root:- {head_root}")
 
     # Getting the Stock name from the webpage
     Stock =head_root.find_element(By.CSS_SELECTOR,'[class=nsdq-quote-header__asset-information-name]').text
     print(f"Stock Name- {Stock}")
 
-    Stock_Abb = ticker
+    Stock_Abb = stock
     print(f"Stock Abbreviation - {Stock_Abb}")
 
     Price = head_root.find_element(By.CSS_SELECTOR,'[class=nsdq-quote-header__pricing-information-saleprice]').text
@@ -80,16 +76,17 @@ for ticker in ticker_list:
     driver.close()
 
 
-print(f"Moving files from {download_path} to {dest}")
-for file in os.listdir(download_path):
-    if file.startswith("HistoricalData"):
-        file_path = f"{download_path}\\{file}"
-        dest_path = f"{dest}\\{Stock_Abb}\\{file}"
-        shutil.move(file_path, dest_path)
-        print(f"Moved {file} to {dest}")
+
+    print(f"Moving files from {download_path} to {dest}")
+    for file in os.listdir(download_path):
+        if file.startswith("HistoricalData"):
+            file_path = f"{download_path}/{file}"
+            dest_path = f"{dest}/{stock}/{file}"
+            print(f"File Path - {file_path}\nDest Path - {dest_path}")
+            shutil.move(file_path, dest_path)
+            print(f"Moved {file} to {dest}")
 
 
-writer = pd.ExcelWriter("price_data.xlsx", engine = "xlsxwriter")
 
 # writer = pd.ExcelWriter('default.xlsx') # Arbitrary output name
 # for csvfilename in sys.argv[1:]:
@@ -98,18 +95,36 @@ writer = pd.ExcelWriter("price_data.xlsx", engine = "xlsxwriter")
 # writer.save()
 
 
-for ticker in ticker_list:
-
-    Stock_Abb = ticker
+def consolidate_data(stock):
     
-    for file in os.listdir(file_path):
-        if file.split('_')[0] == "Historical Data":
-            excel_path = f"{dest}\\{Stock_Abb}\\{file}"
-            df = pd.read_csv(excel_path, index_col = 'Date')
-            df.to_excel(writer, sheet_name=ticker)
+    writer = pd.ExcelWriter("price_data.xlsx")
 
+    file_path = dest + '/' + stock
+
+    print(f"Reading files inside {file_path} for consolidation")
+
+    for file in os.listdir(file_path):
+        print(f"Found file - {file}")
+        if file.split('_')[0] == "HistoricalData":
+            print(f"Reading file {file}")
+            df = pd.read_csv(file_path, index_col = 'Date')
+            print(f"Saving file information to excel")
+            df.to_excel(writer, sheet_name=stock)
+        else:
+            continue
     writer.close()
 
 
 
-    print(f"Finished consolidating the price data for all tickers")
+    print(f"Finished consolidating the price data for {stock}")
+
+if __name__ == "__main__":
+    stock = input().upper()
+
+    print(f"Starting to get the historical data for {stock}")
+    get_stock_data(stock)
+    print(f"Downloaded and moved historical data")
+    print("-----------------------------------------------------------------------------------------------")
+    print(f"Starting to consolidate all data for {stock} into one file")
+    consolidate_data(stock)
+    print(f"Consolidated all data for {stock}")
