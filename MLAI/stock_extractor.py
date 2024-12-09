@@ -97,7 +97,7 @@ def get_stock_data(stock):
 
 def consolidate_data(stock):
     
-    writer = pd.ExcelWriter("price_data.xlsx")
+    writer = pd.ExcelWriter(f"{stock}_price_data.xlsx")
 
     file_path = f"{dest}/{stock}"
 
@@ -110,6 +110,9 @@ def consolidate_data(stock):
             df = pd.read_csv(f"{file_path}/{file}", index_col = 'Date')
             print(f"Saving file information to excel")
             df.to_excel(writer, sheet_name=stock)
+            print(f"Deleting file {file}")
+            os.remove(f"{file_path}/{file}")
+            print(f"File deleted {file}")
         else:
             continue
     writer.close()
