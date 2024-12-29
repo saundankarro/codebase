@@ -15,7 +15,7 @@ def expand_shadow_element(driver, element):
     return driver.execute_script('return arguments[0].shadowRoot', element)
 
 download_path = "C:/Users/saund/Downloads"
-dest = "C:/Users/saund/Rohit/Code/codebase/MLAI/nasdaq/data"
+dest = "C:/Users/saund/Rohit/Code/codebase/MLAI/stocks/nasdaq/data"
 
 def get_stock_data(stock):
 
