@@ -1,5 +1,6 @@
 '''
 Using Stocks to train a model, using Geeks for Geeks code as basis
+
 '''
 
 print("Importing packages")
