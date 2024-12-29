@@ -1,150 +1,90 @@
-print("Importing packages")
-import numpy as np
+'''
+Stock Price Predictor via Machine Learning, using Medium's code as base
+'''
+print(f"Importing libraries")
+import yfinance as yf
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sb
-print("Imported numpy, pandas, matplotlib, and seaborn")
-
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-from sklearn.metrics import ConfusionMatrixDisplay
-from xgboost import XGBClassifier
-from sklearn import metrics
-print("Imported modules from sklearn and xgboost packages)")
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
 
-import warnings
-warnings.filterwarnings('ignore', category=DeprecationWarning)
-print("\n\nImported warnings and filtered out Deprecation Warnings")
+print(f"Libraries Imported")
+ticker = 'MSFT'
 
-print("\n\nStoring Microsoft Stock Data")
-df = pd.read_excel('./MSFT_price_data.xlsx', parse_dates=['Date'])
+print(f"Pulling Microsoft stock data from Yahoo Finance")
+# Multi Level Index is True by default. Setting as false allows iloc to work when predicting future gain
+data = yf.download(ticker, multi_level_index=False)
+print(f"Microsoft Stock data has been pulled.\n")
+print(data.head())
 
-print(f"\n\nViewing the data")
-print(df.head())
+print(f"\n{data.info()}")
 
-print(f"\n\nDescribing the data")
-print(df.describe(include="all"))
-print(df.dtypes)
+print(f"\nCalculating Moving Averages")
+data['MA_10'] = data['Close'].rolling(window=10).mean()
+data['MA_50'] = data['Close'].rolling(window=50).mean()
+print(f"Created Moving Average columns: \n", data.head(20))
 
-print(f"\n\nInfo on the data")
-df.info()
+data = data.dropna()
 
-print(f"\n\nCleaning the data")
-df[df.columns[1]] = df[df.columns[1]].replace(r'[\$\,]','', regex=True).astype(float)
-df[df.columns[3]] = df[df.columns[3]].replace(r'[\$\,]','', regex=True).astype(float)
-df[df.columns[4]] = df[df.columns[4]].replace(r'[\$\,]','', regex=True).astype(float)
-df[df.columns[5]] = df[df.columns[5]].replace(r'[\$\,]','', regex=True).astype(float)
-df.rename(columns={"Close/Last":"Close"}, inplace=True)
-print(df.dtypes)
+# Defining features and target
+X = data[['Close','MA_10','MA_50']]
+Y = data['Close'].shift(-1).dropna()
+X = X[:-1]
 
-print(f"\nViewing cleaned data")
-print(df.describe(include="all"))
+print(f"Splitting the data into 2: Training and Testing")
+# Splitting the data into training and testing sets
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(X,Y, test_size=0.2, random_state=42)
 
+print(f"Initializing and Training Linear Regression Model")
+model = LinearRegression()
+model.fit(X_Train, Y_Train)
 
-print(f"\nThe count of nulls in the data are as follows: -\n{pd.isnull(df).sum()}")
+print(f"Making Predictions")
+predictions = model.predict(X_Test)
 
-print(f"\n\nCreating Line Plot for stocks")
-plt.figure(figsize=(15,5))
-plt.plot(df['Date'],df['Close'])
-plt.title('Microsoft Closing Price', fontsize=15)
-plt.ylabel('Price in Dollars', fontsize=15)
+print(f"Evaluating the model")
+mse = mean_squared_error(Y_Test, predictions)
+print(f"Mean Squared Error:- {mse}")
 
+r2 = r2_score(Y_Test, predictions)
+print(f"R² Score: {r2}")
+
+plt.figure(figsize =(14,7))
+plt.plot(Y_Test.index, Y_Test.values, label='Actual Price')
+plt.plot(Y_Test.index, predictions, label='Predicted Price')
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.title('Actual vs. Predicted Stock Prices')
+plt.legend()
 plt.show()
 
-print(f"\nMicrosoft Stock Price has increased by almost 4x in 10 years")
+init_bal = 10000 # Starting balance in USD
+bal = init_bal
+position = 0 # Number of shares
 
-features = ['Open','High', 'Low', 'Close', 'Volume']
+for i in range(len(X_Test)):
+    current_price = X_Test.iloc[i]['Close']
+    predicted_price = predictions[i]
 
-print(f"\nCreating Sub Plot for stocks")
+    # print(f"current price: {current_price}")
+    # print(f"Predicted price: {predicted_price}")
 
-plt.subplots(figsize=(20,10))
+    if predicted_price > current_price and bal >= current_price:
+        # Buy stock
+        shares_to_buy = int(bal // current_price) # Buy whole shares only
+        if shares_to_buy > 0:
+            position += shares_to_buy
+            bal -= shares_to_buy *  current_price
+            print(f"Buying {shares_to_buy} shares at {current_price:.2f}")
 
-for i, col in enumerate(features):
-    sb.displot(df[col], kde=True)
+        elif predicted_price < current_price and position > 0:
+            # Sell Stock
+            bal += position * current_price
+            print(f"Selling {position} at {current_price:.2f}")
+            position = 0
 
-plt.show()
-
-print(f"\nThe Volume of Microsoft stocks has outliers, which is causing the data to skew towards the right.")
-
-df['Day'] = df['Date'].dt.day
-df['Month'] = df['Date'].dt.month
-df['Year'] = df['Date'].dt.year
-
-df['Is_Quarter_End'] = np.where(df['Month']%3==0,1,0)
-
-print(f"\nExtracting Quarter end from data")
-print(df.head())
-
-
-print(f"\nAnalyzing the stock prices over time")
-data_grouped = df.drop('Date', axis=1).groupby('Year').mean()
-plt.subplots(figsize=(20,10))
-
-for i, col in enumerate(['Open','High','Low','Close']):
-    plt.subplot(2,2,i+1)
-    data_grouped[col].plot.bar()
-
-plt.show()
-
-print(f"As expected, the stock prices for Microsoft has quadrupled in about 10 years")
-
-
-print(f"\nAnalyzing the stock data, comparing months that are not quarter ends to months that are")
-print(df.drop('Date',axis=1).groupby('Is_Quarter_End').mean())
-print(f"\nMonths that are quarter ending months (March, June, September, and December) have lower stock prices and higher trade volumes than other months")
-
-df['Open-Close'] = df['Open'] - df['Close']
-df['Low-High'] = df['Low'] - df['High']
-df['Target'] = np.where(df['Close'].shift(-1) > df['Close'],1,0)
-
-print(f"Adding columns to help train the model. The target column is a signal if we should buy or not.")
-
-print(f"\nAnalying pie graph to determine if target column is balanced")
-plt.pie(df['Target'].value_counts().values,
-        labels=[0,1], autopct='%1.1f%%') # %1.1f is for how many decimals to highlight on graph. %% at end is to include % sign
-plt.show()
-
-
-plt.figure(figsize=(10,10))
-
-
-print(f"\nCreating a heat map to determine if there are any highly correlated features to avoid in the learning process of the algorithm")
-sb.heatmap(df.drop('Date',axis=1).corr() > 0.9, annot=True, cbar=False)
-plt.show()
-print(f"As per the heatmap, the Open, Close, High and Low values are expectedly correlated.\nThe heatmap also shows the Open, Close, High, and Low values are highly correlated to the Year.")
-
-print(f"\nStarting to normalize data for later training the model")
-
-features = df[['Open-Close','Low-High','Is_Quarter_End']]
-target = df['Target']
-
-scalar = StandardScaler()
-features = scalar.fit_transform(features)
-
-X_Train, X_Valid, Y_Train, Y_Valid = train_test_split(
-    features, target, test_size=0.1, random_state=2022
-)
-
-print(X_Train.shape, X_Valid.shape)
-
-models = [LogisticRegression(), SVC(
-    kernel='poly', probability=True), XGBClassifier()
-]
-
-for i in range(3):
-    models[i].fit(X_Train, Y_Train)
-
-    print(f"{models[i]} :")
-    print(f"Training Accuracy: ", metrics.roc_auc_score(
-        Y_Train, models[i].predict_proba(X_Train)[:,1]
-    ))
-    print(f"Validation Accuracy: ", metrics.roc_auc_score(
-        Y_Valid, models[i].predict_proba(X_Valid)[:,1]
-    ))
-
-print(f"Models have been trained")
-
-ConfusionMatrixDisplay.from_estimator(models[0], X_Valid, Y_Valid)
-plt.show()
+fin_bal = bal + (position*X_Test.iloc[-1]['Close'])
+profit = fin_bal - init_bal
+print(f"Final balance: {fin_bal:.2f}")
+print(f"Profit:- {profit}")
