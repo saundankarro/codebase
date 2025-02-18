@@ -4,6 +4,7 @@ CodeChef/Pandas/pandas_env/
 MLAI/.venv
 MLAI/mlai_env
 MFA/mfa
+Pyspark/pyspark_env
 
 # MLAI Data
 MLAI/nasdaq/data/*
