@@ -5,6 +5,7 @@ MLAI/.venv/
 MLAI/mlai_env/
 MFA/mfa/
 Pyspark/pyspark_env/
+data_analysis_with_python/da_env/
 
 # MLAI Data
 MLAI/nasdaq/data/*
