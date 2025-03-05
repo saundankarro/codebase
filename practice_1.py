@@ -80,3 +80,11 @@ queue.append(2)
 pop_elem = queue.pop(0)
 
 print(queue,pop_elem)
+
+
+def find_unique_values(dictionary):
+    return [
+        value for _,value in dictionary.items() if len([
+            compare_key for compare_key in dictionary.keys() if dictionary[compare_key] == value
+        ]) == 1
+    ]
