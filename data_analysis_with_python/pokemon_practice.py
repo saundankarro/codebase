@@ -1,7 +1,6 @@
-import kagglehub
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 
 
 # Download latest version
@@ -120,19 +119,24 @@ By exploring the Pokemon type weaknesses, I can understand what Pokemon types ar
 an unknown team of Pokemon
 '''
 
-weakdf = pokedf.assign(weakness=pokedf['weakness'].str.split(r',')).explode('weakness')
+weakdf = pokedf.assign(weakness=pokedf['weakness'].str.split(',')).explode('weakness')
 weakdf[cols] = weakdf[cols].apply(lambda x: x.str.strip())
-print(weakdf.head(25))
+print(f"weakdf:- {weakdf.head(25)}")
 
 weakdf = weakdf.drop(weakdf[weakdf.weakness == ''].index)
 print(weakdf.describe())
 
-a = weakdf['weakness'].unique()
-print(f"Sorted list:- {sorted(a)}")
+# a = weakdf['weakness'].unique()
+# print(f"Sorted list:- {sorted(a)}")
 
-weak_types = weakdf['type'].value_counts()
+weak_types = weakdf["weakness"].value_counts()
 
-print(f"weak_types:- \n{weak_types.head(20)}")
+print(f"weak_types index:- \n{weak_types.index}")
+print(f"weak_types values:- \n{weak_types.values}")
+print(f"weak_types:- \n{weak_types}")
 
-plt.bar(weak_types.index, weak_types.values)
-plt.show()
+weak_types.plot.bar(x="weakness",y="values")
+# plt.bar(weak_types.index, weak_types.values)
+# plt.show()
+
+print(f"Plot Should show")

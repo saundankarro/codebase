@@ -1,0 +1,64 @@
+create or replace stage external_stage
+storge_integration=external_storage_integration
+url='s3://my-bucket-170108'
+file_format=demo_format;
+
+select $1.$2 from @external_stage;
+
+create or replace table demo_table_1
+(
+    Employee_id Number,
+    Employee_name String
+);
+
+copy into demo_table_1
+from @external_stage;
+force=true; -- Forces the copy through
+Purge=true; -- Purges the data after copying
+On_error = 'Continue' --Skips only the bad record
+On_error = 'Skip_file' -- Skips only the whole file
+On_error = 'Abort' -- Abort the process
+
+
+create or replace pipe first_pipe
+auto_ingest=True
+As
+copy into demo_table_1
+from @external_stage;
+
+select * from demo_table_1
+before (timestamp=> '2024-04-24 21:41:25.533 -0700'::timestamp_ltz);
+
+select * from demo_table_1
+AT (timestamp=> '2024-04-24 21:41:25.533 -0700'::timestamp_ltz);
+
+select * from table
+before (statement=> '<queryID>');
+
+select * from table
+AT(OFFSET=>-120);
+
+
+Undrop table table_name;
+Undrop database database_name;
+
+-- Create Backup of Demo Table 1 by cloning Demo Table 1 before given timestamp
+Create demo_table_1_bkp clone demo_table_1
+before(Timestamp => '2024-04-28 05:27:04.824 -0700'::timestamp_ltz)
+
+
+-- To share data
+
+-- Account that will share the data
+Create share share_Demo_1;
+Grant usage on Database Demo to share share_Demo_1;
+Grant usage on Schema Demo to share share_Demo_1;
+Grant select on Table demo_table_1 to share share_Demo_1;
+-- Adding Consumer Account
+Alter share share_name add account=<organization.account.name>;
+
+
+-- Account that will consume the data
+Create Database database name from share
+provider_account_organization_name.provider_account_name.share_Demo_1;
+
