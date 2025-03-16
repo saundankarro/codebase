@@ -62,3 +62,72 @@ Alter share share_name add account=<organization.account.name>;
 Create Database database name from share
 provider_account_organization_name.provider_account_name.share_Demo_1;
 
+
+
+-- Create a table
+create or replace table trips
+(
+    tripduration integer,
+    starttime timestamp,
+    stoptime timestamp,
+    start_station_id integer,
+    start_station_name string,
+    start_station_longitude string,
+    start_station_latitude string,
+    end_station_id integer,
+    end_station_name string,
+    end_station_longitude string,
+    end_station_latitude string,
+    bikeid integer,
+    membership_type string,
+    usertype string,
+    birth_year integer,
+    gender integer
+);
+
+
+-- check contents
+list @citibike_trips
+
+truncate table trips;
+
+// load the data
+copy into trips from @citibike_trips
+file_format=CSV;
+
+// get some sample stats
+select date_trunc('hour',starttime) as 'date',
+count(*) as 'num_trips',
+avg(tripduration)/60 as 'avg_duration_mins',
+avg(haversine(start_station_latitude, start_station_longitude, end_station_latitude, end_station_longitude)) as 'avg_distance_km'
+from trips
+group by 1
+order by 1;
+
+
+// Which month is busiest?
+select monthname(starttime) as "month",
+count(*) as "num trips"
+from trips
+group by 1
+order by 2 desc;
+
+// create a clone
+create clone trips_dev clone trips;
+
+create database weather;
+
+set role sysadmin;
+use warehouse compute_wh;
+use database weather;
+use schema public;
+
+// create a new table
+create table json_weather_data(v_variant);
+
+
+// create a new stage
+create stage nyc_weather
+url = 's3://snowflake-workshop-lab/weather-nyc';
+
+list @nyc_weather
