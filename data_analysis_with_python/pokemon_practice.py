@@ -136,7 +136,7 @@ print(f"weak_types values:- \n{weak_types.values}")
 print(f"weak_types:- \n{weak_types}")
 
 weak_types.plot.bar(x="weakness",y="values")
-# plt.bar(weak_types.index, weak_types.values)
-# plt.show()
+plt.bar(weak_types.index, weak_types.values)
+plt.show()
 
 print(f"Plot Should show")
